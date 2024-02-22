@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 
@@ -22,18 +23,26 @@ public class Partner {
     @Id
     @GeneratedValue
     private Long id;
+
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
     @Null
     @Column(name = "brn_number", nullable = true)
-    private String BRNumber;
+    private String brNumber;
     @Null
     @Column(name = "logo", nullable = true)
-    private String Logo;
+    private String logo;
     @Null
     @Column(name = "address", nullable = true)
-    private String Address;
+    private String address;
+
+    @CreationTimestamp
     @Column(name = "date_created", nullable = false)
     private LocalDate dateCreated;
-    @Column(name = "date_updated", nullable = false)
+
+    @Null
+    @Column(name = "date_updated", nullable = true)
     private LocalDate dateUpdated;
 
 

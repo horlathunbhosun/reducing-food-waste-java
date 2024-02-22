@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 
@@ -27,9 +28,11 @@ public class Product {
     @Column(name = "description", nullable = true)
     private String description;
 
+    @CreationTimestamp
     @Column(name = "date_created", nullable = false)
     private LocalDate dateCreated;
-    @Column(name = "date_updated", nullable = false)
+    @Null
+    @Column(name = "date_updated", nullable = true)
     private LocalDate dateUpdated;
 
 

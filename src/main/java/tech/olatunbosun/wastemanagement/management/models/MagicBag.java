@@ -2,7 +2,9 @@ package tech.olatunbosun.wastemanagement.management.models;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Null;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 
@@ -25,9 +27,11 @@ public class MagicBag {
     @Column(name = "partner_id", nullable = false)
     private int partnerId;
 
+    @CreationTimestamp
     @Column(name = "date_created", nullable = false)
     private LocalDate dateCreated;
-    @Column(name = "date_updated", nullable = false)
+    @Null
+    @Column(name = "date_updated", nullable = true)
     private LocalDate dateUpdated;
 
 }

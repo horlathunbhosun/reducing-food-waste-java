@@ -3,10 +3,12 @@ package tech.olatunbosun.wastemanagement.management.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 
@@ -35,8 +37,10 @@ public class MagicBagItem {
     @Column(name = "quantity", nullable = false)
     private int quantity;
 
+    @CreationTimestamp
     @Column(name = "date_created", nullable = false)
     private LocalDate dateCreated;
-    @Column(name = "date_updated", nullable = false)
+    @Null
+    @Column(name = "date_updated", nullable = true)
     private LocalDate dateUpdated;
 }

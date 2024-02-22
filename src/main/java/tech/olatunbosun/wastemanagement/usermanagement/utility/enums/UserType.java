@@ -4,7 +4,7 @@ public enum UserType {
 
     ADMIN("admin"),
     PARTNER("partner"),
-    WASTEWARRIOR("waste_warrior");
+    WASTE_WARRIOR("waste_warrior");
 
     private final String userType;
 

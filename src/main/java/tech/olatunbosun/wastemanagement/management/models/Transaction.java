@@ -3,6 +3,8 @@ package tech.olatunbosun.wastemanagement.management.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import org.hibernate.annotations.CreationTimestamp;
 import tech.olatunbosun.wastemanagement.management.utility.enums.PaymentType;
 
 import java.time.LocalDate;
@@ -30,11 +32,11 @@ public class Transaction {
     @Column(name = "payment_type", nullable = false)
     private PaymentType paymentType;
 
-    @NotNull
+    @CreationTimestamp
     @Column(name = "date_created", nullable = false)
     private LocalDate dateCreated;
-    @NotNull
-    @Column(name = "date_updated", nullable = false)
+    @Null
+    @Column(name = "date_updated", nullable = true)
     private LocalDate dateUpdated;
 
 

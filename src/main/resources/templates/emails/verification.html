@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Template</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #f8f8f8;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+        }
+        .footer {
+            background-color: #f8f8f8;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Welcome to Our Website</h1>
+    </div>
+    <div class="content">
+        <p>Dear {{fullName}},</p>
+        <p>Thank you for registering. Please click on the following link to verify your email address:</p>
+        <p><a href="http://example.com/verify?token={{verificationToken}}">Verify Email</a></p>
+    </div>
+    <div class="footer">
+        <p>If you have any questions, please contact us at support@example.com</p>
+    </div>
+</div>
+</body>
+</html>
