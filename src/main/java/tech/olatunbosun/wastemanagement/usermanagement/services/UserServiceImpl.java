@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import tech.olatunbosun.wastemanagement.usermanagement.mail.VerificationMail;
 import tech.olatunbosun.wastemanagement.usermanagement.models.Partner;
@@ -105,6 +106,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDTO updateUser(User user) {
+
         return null;
     }
 
@@ -116,6 +118,93 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDTO findUserByEmail(String email) {
         return null;
+    }
+
+    @Override
+    public GenericResponseDTO verifyUser(String token) {
+        GenericResponseDTO responseDTO = new GenericResponseDTO();
+        if (userRepository.findByVerificationCode(token).isPresent()) {
+            User user = userRepository.findByVerificationCode(token).get();
+            if (user.isVerified()) {
+                responseDTO.setMessage("User already verified");
+                responseDTO.setStatus("error");
+                responseDTO.setStatusCode(HttpStatus.BAD_REQUEST.value());
+                return responseDTO;
+            }
+            user.setVerified(true);
+            user.setVerificationCode(null);
+            userRepository.save(user);
+            responseDTO.setMessage("User verified successfully");
+            responseDTO.setStatus("success");
+            responseDTO.setData(user);
+            return responseDTO;
+        }
+        responseDTO.setMessage("Token not found");
+        responseDTO.setStatus("error");
+        responseDTO.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        return responseDTO;
+    }
+
+    @Override
+    public GenericResponseDTO resendVerificationToken(String email) {
+        GenericResponseDTO responseDTO = new GenericResponseDTO();
+        if(userRepository.findByEmail(email).isPresent()){
+            User user = userRepository.findByEmail(email).get();
+            if(user.isVerified()){
+                responseDTO.setMessage("User already verified");
+                responseDTO.setStatus("error");
+                responseDTO.setStatusCode(HttpStatus.BAD_REQUEST.value());
+                return responseDTO;
+            }
+            String verificationToken = TokenGenerator.generateToken(6);
+            user.setVerificationCode(verificationToken);
+            userRepository.save(user);
+            Map<String, Object> mailData = Map.of("verificationToken", verificationToken, "fullName", user.getFullName());
+            try {
+                verificationMail.sendVerificationEmail(user.getEmail(), mailData);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
+            responseDTO.setMessage("Verification token sent successfully");
+            responseDTO.setStatus("success");
+            return responseDTO;
+        }
+
+        return null;
+    }
+
+    @Override
+    public GenericResponseDTO forgetPassword(String email, String phoneNumber) {
+        GenericResponseDTO responseDTO = new GenericResponseDTO();
+        if (email != null){
+            if(userRepository.findByEmail(email).isPresent()){
+                User user = userRepository.findByEmail(email).get();
+                String verificationToken = TokenGenerator.generateToken(6);
+                user.setVerificationCode(verificationToken);
+                userRepository.save(user);
+                Map<String, Object> mailData = Map.of("verificationToken", verificationToken, "fullName", user.getFullName());
+                try {
+                    verificationMail.sendVerificationEmail(user.getEmail(), mailData);
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
+                responseDTO.setMessage("Verification token sent successfully");
+                responseDTO.setStatus("success");
+                return responseDTO;
+            }
+        }else{
+            if(userRepository.findByPhoneNumber(phoneNumber).isPresent()){
+                User user = userRepository.findByPhoneNumber(phoneNumber).get();
+                String verificationToken = TokenGenerator.generateToken(6);
+                user.setVerificationCode(verificationToken);
+                userRepository.save(user);
+                //todo send sms
+
+            }
+        }
+        responseDTO.setMessage("Something went wrong, try again");
+        responseDTO.setStatus("error");
+        return responseDTO;
     }
 
     private Converter<String, UserType> userTypeConverter(){

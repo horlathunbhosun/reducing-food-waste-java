@@ -12,4 +12,9 @@ public interface UserService {
     UserResponseDTO findUserById(Long id);
     UserResponseDTO findUserByEmail(String email);
 
+    GenericResponseDTO verifyUser(String token);
+    GenericResponseDTO resendVerificationToken(String email);
+
+    GenericResponseDTO forgetPassword(String email, String phoneNumber);
+
 }

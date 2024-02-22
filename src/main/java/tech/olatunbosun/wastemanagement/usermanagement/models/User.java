@@ -33,7 +33,7 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "verification_code")
+    @Column(name = "verification_code", unique = true)
     private String verificationCode;
 
     @Column(name = "phone_number", nullable = false, unique = true)

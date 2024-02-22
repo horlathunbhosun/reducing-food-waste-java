@@ -12,7 +12,7 @@ public class GenericResponseDTO {
 
     private String message;
     private String status;
-    private String statusCode;
+    private int statusCode;
     private Object data;
     @JsonProperty("error_data")
     private Object errorData;
