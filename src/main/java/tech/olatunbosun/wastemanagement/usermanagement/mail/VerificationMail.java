@@ -20,7 +20,7 @@ public class VerificationMail {
     }
 
 
-    @Async
+    @Async //This annotation is used to indicate that a method should be run asynchronously. This means that the method will return immediately upon invocation and the actual execution of the method will occur in a task that has been submitted to a Spring TaskExecutor
     public void sendVerificationEmail(String to, Map<String, Object> dynamicValue) throws MessagingException {
         String subject = "Verify your email address";
         String body;
