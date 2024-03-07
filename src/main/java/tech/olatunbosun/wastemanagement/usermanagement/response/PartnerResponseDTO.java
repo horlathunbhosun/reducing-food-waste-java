@@ -1,12 +1,13 @@
 package tech.olatunbosun.wastemanagement.usermanagement.response;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class PartnerResponseDTO {
     private Long id;
     private String brNumber;

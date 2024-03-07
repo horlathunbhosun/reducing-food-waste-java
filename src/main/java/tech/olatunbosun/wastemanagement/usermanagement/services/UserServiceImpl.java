@@ -3,23 +3,30 @@ package tech.olatunbosun.wastemanagement.usermanagement.services;
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import tech.olatunbosun.wastemanagement.configs.JwtService;
 import tech.olatunbosun.wastemanagement.usermanagement.mail.VerificationMail;
 import tech.olatunbosun.wastemanagement.usermanagement.models.Partner;
 import tech.olatunbosun.wastemanagement.usermanagement.models.User;
 import tech.olatunbosun.wastemanagement.usermanagement.repository.PartnerRepository;
 import tech.olatunbosun.wastemanagement.usermanagement.repository.UserRepository;
 import tech.olatunbosun.wastemanagement.usermanagement.request.CreateUserDTO;
+import tech.olatunbosun.wastemanagement.usermanagement.request.LoginDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.response.GenericResponseDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.response.UserResponseDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.utility.TokenGenerator;
@@ -32,20 +39,23 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 //@NoArgsConstructor(force = true)
 @Service
-public class UserServiceImpl implements UserService, UserDetailsService {
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
 
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    PartnerRepository partnerRepository;
+//    @Autowired
+   private final UserRepository userRepository;
+//    @Autowired
+  private final  PartnerRepository partnerRepository;
 
+//    @Autowired
+  private final  ModelMapper modelMapper;
+//    @Autowired
+   private final VerificationMail verificationMail;
+//    @Autowired
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    ModelMapper modelMapper;
-    @Autowired
-    VerificationMail verificationMail;
-    @Autowired
-    PasswordEncoder passwordEncoder;
 
     @Override
     public GenericResponseDTO saveUser(CreateUserDTO createUserDTO) {
@@ -95,8 +105,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             } catch (MessagingException e) {
                 e.printStackTrace();
             }
+
+            var jwt = jwtService.generateToken(savedUser);
             responseDTO.setMessage("User created successfully");
             responseDTO.setStatus("success");
+            responseDTO.setData(UserResponseDTO.userResponseBuilder(savedUser));
+            responseDTO.setToken(jwt);
             return responseDTO;
         }catch (DataIntegrityViolationException e){
             return getGenericResponseDTO(e);
@@ -221,6 +235,41 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return responseDTO;
     }
 
+    @Override
+    public GenericResponseDTO login(LoginDTO loginDTO) {
+        GenericResponseDTO response = new GenericResponseDTO();
+        try {
+            User user = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User with email " + loginDTO.getEmail() + " not found"));
+//            if (!user.isVerified()) {
+//                response.setStatus("error");
+//                response.setMessage("User not verified");
+//                response.setStatusCode(HttpStatus.BAD_REQUEST.value());
+//                return response;
+//            }
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword())
+            );
+            if (!authentication.isAuthenticated()) {
+                response.setStatus("error");
+                response.setMessage("Invalid Credentials");
+                return response;
+            }
+            var jwt = jwtService.generateToken(user);
+
+            response.setMessage("Login successful");
+            response.setStatus("success");
+            response.setData(UserResponseDTO.userResponseBuilder(user));
+            response.setStatusCode(HttpStatus.OK.value());
+            response.setToken(jwt);
+        } catch (AuthenticationException e){
+            response.setStatus("error");
+            response.setMessage(e.getMessage());
+            response.setStatusCode(HttpStatus.BAD_REQUEST.value());
+            return response;
+        }
+        return response;
+    }
+
     private Converter<String, UserType> userTypeConverter(){
         return new Converter<String, UserType>() {
             @Override
@@ -231,9 +280,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
-    }
+//    @Override
+//    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+//        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User with email "+ email +" not found"));
+//    }
 }
 

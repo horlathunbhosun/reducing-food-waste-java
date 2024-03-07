@@ -3,8 +3,12 @@ package tech.olatunbosun.wastemanagement.usermanagement.controllers;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import tech.olatunbosun.wastemanagement.usermanagement.request.CreateUserDTO;
@@ -17,17 +21,27 @@ import tech.olatunbosun.wastemanagement.validation.ValidationErrorService;
 import java.util.Map;
 
 @RestController
-@AllArgsConstructor
-//@RequestMapping("v1/")
+@RequiredArgsConstructor
+//@AllArgsConstructor
+@RequestMapping("v1/")
 public class UserRegistration {
 
-    UserService userService;
-    ValidationErrorService validationErrorService;
 
-    @PostMapping("/v1/user/register")
+
+    private final UserDetailsService userDetailsService;
+    private final UserService userService;
+    private final ValidationErrorService validationErrorService;
+
+//    @Autowired
+//    public UserRegistration(@Qualifier("userDetailsService") UserDetailsService userDetailsService,@Qualifier("userServiceImpl") UserService userService, ValidationErrorService validationErrorService) {
+//        this.userDetailsService = userDetailsService;
+//        this.userService = userService;
+//        this.validationErrorService = validationErrorService;
+//    }
+    @PostMapping("/user/register")
     public ResponseEntity<GenericResponseDTO> registerUser(@Valid @RequestBody CreateUserDTO createUserDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
-            validationError(bindingResult);
+            validationErrorService.validationError(bindingResult);
         }
         GenericResponseDTO response = userService.saveUser(createUserDTO);
         if (response.getStatus().equals("error")){
@@ -48,7 +62,7 @@ public class UserRegistration {
     @PostMapping("user/resend-verification")
     public ResponseEntity<GenericResponseDTO> resendVerification(@Valid @RequestBody ResendVerificationRequestDTO body, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
-            validationError(bindingResult);
+            validationErrorService.validationError(bindingResult);
         }
         GenericResponseDTO response = userService.resendVerificationToken(body.getEmail());
         if (response.getStatus().equals("error")){
@@ -60,7 +74,7 @@ public class UserRegistration {
     @PostMapping("user/forgot-password")
     public ResponseEntity<GenericResponseDTO> forgotPassword(@Valid @RequestBody ForgetPasswordRequestDTO forgetPasswordRequestDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
-            validationError(bindingResult);
+            validationErrorService.validationError(bindingResult);
         }
         GenericResponseDTO response = userService.forgetPassword(forgetPasswordRequestDTO.getEmail(), forgetPasswordRequestDTO.getPhoneNumber());
         if (response.getStatus().equals("error")){
@@ -71,13 +85,6 @@ public class UserRegistration {
 
 
 
-    private ResponseEntity<?> validationError(BindingResult bindingResult){
-        Map<String, String> errors = validationErrorService.validate(bindingResult);
-        GenericResponseDTO errorResponse = new GenericResponseDTO();
-        errorResponse.setStatus("error");
-        errorResponse.setMessage("Validation error occurred");
-        errorResponse.setErrorData(errors);
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
-    }
+
 
 }

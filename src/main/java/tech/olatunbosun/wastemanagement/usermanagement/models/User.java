@@ -19,7 +19,6 @@ import java.util.Collection;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-
 public class User implements UserDetails {
 
     @Id
@@ -60,6 +59,8 @@ public class User implements UserDetails {
     @Null
     @Column(name = "date_updated", nullable = true)
     private LocalDate dateUpdated;
+
+
 
 
     @Override
