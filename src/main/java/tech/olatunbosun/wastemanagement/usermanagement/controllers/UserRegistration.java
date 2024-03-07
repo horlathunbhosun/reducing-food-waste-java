@@ -18,13 +18,13 @@ import java.util.Map;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("v1/")
+//@RequestMapping("v1/")
 public class UserRegistration {
 
     UserService userService;
     ValidationErrorService validationErrorService;
 
-    @PostMapping("user/register")
+    @PostMapping("/v1/user/register")
     public ResponseEntity<GenericResponseDTO> registerUser(@Valid @RequestBody CreateUserDTO createUserDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             validationError(bindingResult);

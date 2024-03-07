@@ -2,12 +2,17 @@ package tech.olatunbosun.wastemanagement.usermanagement.services;
 
 import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import tech.olatunbosun.wastemanagement.usermanagement.mail.VerificationMail;
 import tech.olatunbosun.wastemanagement.usermanagement.models.Partner;
@@ -24,16 +29,23 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-@AllArgsConstructor
+
+//@NoArgsConstructor(force = true)
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
-    private final UserRepository userRepository;
-    private final PartnerRepository partnerRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    PartnerRepository partnerRepository;
 
 
-    private final ModelMapper modelMapper;
-    private final VerificationMail verificationMail;
+    @Autowired
+    ModelMapper modelMapper;
+    @Autowired
+    VerificationMail verificationMail;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Override
     public GenericResponseDTO saveUser(CreateUserDTO createUserDTO) {
@@ -64,6 +76,8 @@ public class UserServiceImpl implements UserService {
             return responseDTO;
         }
         user.setVerificationCode(verificationToken);
+        user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
+
         System.out.println(user.toString());
         try {
             User savedUser = userRepository.save(user);
@@ -217,5 +231,9 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
+    }
 }
 
