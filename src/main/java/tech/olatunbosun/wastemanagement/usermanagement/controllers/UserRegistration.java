@@ -1,6 +1,9 @@
 package tech.olatunbosun.wastemanagement.usermanagement.controllers;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -22,22 +25,45 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "User Registration", description = "User Registration and Verification")
 //@AllArgsConstructor
 @RequestMapping("v1/")
 public class UserRegistration {
-
 
 
     private final UserDetailsService userDetailsService;
     private final UserService userService;
     private final ValidationErrorService validationErrorService;
 
-//    @Autowired
-//    public UserRegistration(@Qualifier("userDetailsService") UserDetailsService userDetailsService,@Qualifier("userServiceImpl") UserService userService, ValidationErrorService validationErrorService) {
-//        this.userDetailsService = userDetailsService;
-//        this.userService = userService;
-//        this.validationErrorService = validationErrorService;
-//    }
+    @Operation(
+            description = "This endpoint is used to register a new user",
+            summary =  "Register a new user",
+            responses = {
+                    @ApiResponse(
+                            description = "Success",
+                            responseCode = "201",
+                            content = {
+                                    @io.swagger.v3.oas.annotations.media.Content(
+                                            mediaType = "application/json",
+                                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = GenericResponseDTO.class)
+                                    )
+                            }
+                    ),
+                    @ApiResponse(
+                            description = "Unauthorized / Invalid Token",
+                            responseCode = "403",
+                            content = {
+                                    @io.swagger.v3.oas.annotations.media.Content(
+                                            mediaType = "application/json",
+                                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = GenericResponseDTO.class)
+                                    )
+                            }
+
+                    )
+            }
+
+    )
+
     @PostMapping("/user/register")
     public ResponseEntity<GenericResponseDTO> registerUser(@Valid @RequestBody CreateUserDTO createUserDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors()){

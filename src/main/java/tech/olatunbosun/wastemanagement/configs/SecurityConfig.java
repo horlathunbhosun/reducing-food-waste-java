@@ -26,13 +26,27 @@ public class SecurityConfig  {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationProvider authenticationProvider;
 
+    private static final String[] WHITE_LIST_URL = {"/api/v1/auth/**",
+            "/v2/api-docs",
+            "/v1/user/**",
+            "/v3/api-docs",
+            "/v3/api-docs/**",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui/**",
+            "/swagger-ui",
+            "/webjars/**",
+            "/swagger-ui.html"};
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.csrf(csrf -> csrf.ignoringRequestMatchers("/**"))
            .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
-                        .requestMatchers("/v1/user/**").permitAll())
+                        .requestMatchers(WHITE_LIST_URL).permitAll())
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
                         .requestMatchers("/v1/user/profile").authenticated());
         http.sessionManagement(session -> session
@@ -44,19 +58,6 @@ public class SecurityConfig  {
 
 
     }
-
-//    @Autowired
-//    public SecurityConfig(JwtAuthenticationFilter jwtTokenFilter) {
-//        this.jwtTokenFilter = jwtTokenFilter;
-//    }
-
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        return new UserServiceImpl();
-//    }
-
-
-
 
 
 }

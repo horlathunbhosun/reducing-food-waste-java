@@ -164,10 +164,10 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
             responseDTO.setMessage("User verified successfully");
             responseDTO.setStatus("success");
-            responseDTO.setData(user);
+            responseDTO.setData(UserResponseDTO.userResponseBuilder(user));
             return responseDTO;
         }
-        responseDTO.setMessage("Token not found");
+        responseDTO.setMessage("Verification Token not found");
         responseDTO.setStatus("error");
         responseDTO.setStatusCode(HttpStatus.BAD_REQUEST.value());
         return responseDTO;
@@ -197,8 +197,10 @@ public class UserServiceImpl implements UserService {
             responseDTO.setStatus("success");
             return responseDTO;
         }
-
-        return null;
+        responseDTO.setMessage("User not found");
+        responseDTO.setStatus("error");
+        responseDTO.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        return responseDTO;
     }
 
     @Override
@@ -240,12 +242,12 @@ public class UserServiceImpl implements UserService {
         GenericResponseDTO response = new GenericResponseDTO();
         try {
             User user = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User with email " + loginDTO.getEmail() + " not found"));
-//            if (!user.isVerified()) {
-//                response.setStatus("error");
-//                response.setMessage("User not verified");
-//                response.setStatusCode(HttpStatus.BAD_REQUEST.value());
-//                return response;
-//            }
+            if (!user.isVerified()) {
+                response.setStatus("error");
+                response.setMessage("User not verified");
+                response.setStatusCode(HttpStatus.BAD_REQUEST.value());
+                return response;
+            }
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword())
             );
