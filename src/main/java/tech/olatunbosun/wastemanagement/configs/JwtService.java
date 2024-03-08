@@ -20,18 +20,43 @@ import java.util.function.Function;
 public class JwtService {
 
 //    @Value("${jwt.secret}")
-    public static String SECRET_KEY = "HGDeNsQr2wLct3lLxp6a9NjK2t5uHAaZ0djJMVNaOp4W2nwb3BVDV6bdvFrijr7M";
+//    public static String SECRET_KEY = "HGDeNsQr2wLct3lLxp6a9NjK2t5uHAaZ0djJMVNaOp4W2nwb3BVDV6bdvFrijr7M";
+
+    @Value("${application.security.jwt.secret-key}")
+    private String secretKey;
+    @Value("${application.security.jwt.expiration}")
+    private long jwtExpiration;
+    @Value("${application.security.jwt.refresh-token.expiration}")
+    private long refreshExpiration;
 
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return Jwts.builder()
-                .claims(extraClaims)
-                .subject(userDetails.getUsername())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+//        return Jwts.builder()
+//                .claims(extraClaims)
+//                .subject(userDetails.getUsername())
+//                .issuedAt(new Date(System.currentTimeMillis()))
+//                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
+//                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+//                .compact();
+
+        return buildToken(extraClaims, userDetails, jwtExpiration);
+
+    }
+
+    public String generateRefreshToken( UserDetails userDetails) {
+        return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+    }
+
+    private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails,long expiration) {
+        return Jwts
+                .builder()
+                .setClaims(extraClaims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -48,7 +73,7 @@ public class JwtService {
 
     private Claims extractAllClaims(final String token) {
         return Jwts.parser()
-                .setSigningKey(getSigningKey())
+                .setSigningKey(getSignInKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -69,15 +94,15 @@ public class JwtService {
 
     public String validateToken(final String token) {
         return Jwts.parser()
-                .setSigningKey(getSigningKey())
+                .setSigningKey(getSignInKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
     }
 
-    private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+    private Key getSignInKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

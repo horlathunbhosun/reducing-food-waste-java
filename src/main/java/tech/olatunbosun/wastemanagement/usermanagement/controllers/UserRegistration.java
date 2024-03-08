@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import tech.olatunbosun.wastemanagement.usermanagement.request.ChangePasswordDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.request.CreateUserDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.request.ForgetPasswordRequestDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.request.ResendVerificationRequestDTO;
@@ -21,6 +22,7 @@ import tech.olatunbosun.wastemanagement.usermanagement.response.GenericResponseD
 import tech.olatunbosun.wastemanagement.usermanagement.services.UserService;
 import tech.olatunbosun.wastemanagement.validation.ValidationErrorService;
 
+import java.security.Principal;
 import java.util.Map;
 
 @RestController
@@ -103,6 +105,18 @@ public class UserRegistration {
             validationErrorService.validationError(bindingResult);
         }
         GenericResponseDTO response = userService.forgetPassword(forgetPasswordRequestDTO.getEmail(), forgetPasswordRequestDTO.getPhoneNumber());
+        if (response.getStatus().equals("error")){
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PatchMapping("user/change-password")
+    public ResponseEntity<GenericResponseDTO> changePassword(@Valid @RequestBody ChangePasswordDTO changePasswordDTO, BindingResult bindingResult, Principal loggedInUser){
+        if (bindingResult.hasErrors()){
+            validationErrorService.validationError(bindingResult);
+        }
+        GenericResponseDTO response = userService.changePassword(changePasswordDTO, loggedInUser);
         if (response.getStatus().equals("error")){
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }

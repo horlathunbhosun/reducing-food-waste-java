@@ -2,10 +2,13 @@ package tech.olatunbosun.wastemanagement.usermanagement.services;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import tech.olatunbosun.wastemanagement.usermanagement.models.User;
+import tech.olatunbosun.wastemanagement.usermanagement.request.ChangePasswordDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.request.CreateUserDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.request.LoginDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.response.GenericResponseDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.response.UserResponseDTO;
+
+import java.security.Principal;
 
 public interface UserService {
 
@@ -19,6 +22,7 @@ public interface UserService {
 
     GenericResponseDTO forgetPassword(String email, String phoneNumber);
     GenericResponseDTO login(LoginDTO loginDTO);
+    GenericResponseDTO changePassword(ChangePasswordDTO changePasswordDTO, Principal principal);
 //    UserDetails loadUserByUsername(String username);
 
 }

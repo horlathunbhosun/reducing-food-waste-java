@@ -1,21 +1,17 @@
 package tech.olatunbosun.wastemanagement.usermanagement.services;
 
 import jakarta.mail.MessagingException;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +21,7 @@ import tech.olatunbosun.wastemanagement.usermanagement.models.Partner;
 import tech.olatunbosun.wastemanagement.usermanagement.models.User;
 import tech.olatunbosun.wastemanagement.usermanagement.repository.PartnerRepository;
 import tech.olatunbosun.wastemanagement.usermanagement.repository.UserRepository;
+import tech.olatunbosun.wastemanagement.usermanagement.request.ChangePasswordDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.request.CreateUserDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.request.LoginDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.response.GenericResponseDTO;
@@ -32,6 +29,7 @@ import tech.olatunbosun.wastemanagement.usermanagement.response.UserResponseDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.utility.TokenGenerator;
 import tech.olatunbosun.wastemanagement.usermanagement.utility.enums.UserType;
 
+import java.security.Principal;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -42,16 +40,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-//    @Autowired
-   private final UserRepository userRepository;
-//    @Autowired
-  private final  PartnerRepository partnerRepository;
 
-//    @Autowired
+   private final UserRepository userRepository;
+  private final  PartnerRepository partnerRepository;
   private final  ModelMapper modelMapper;
-//    @Autowired
    private final VerificationMail verificationMail;
-//    @Autowired
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -94,7 +87,7 @@ public class UserServiceImpl implements UserService {
 
             if (createUserDTO.getUserType().equals("partner")) {
                 Partner partner = modelMapper.map(createUserDTO, Partner.class);
-                partner.setUserId(savedUser.getId());
+                partner.setUser(savedUser);
                 partnerRepository.save(partner);
             }
 
@@ -272,6 +265,32 @@ public class UserServiceImpl implements UserService {
         return response;
     }
 
+    @Override
+    public GenericResponseDTO changePassword(ChangePasswordDTO changePasswordDTO, Principal loggedInUser) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) loggedInUser).getPrincipal();
+        GenericResponseDTO response = new GenericResponseDTO();
+        if (!passwordEncoder.matches(changePasswordDTO.getCurrentPassword(), user.getPassword())) {
+            response.setStatus("error");
+            response.setMessage("Old password is incorrect");
+            response.setStatusCode(HttpStatus.BAD_REQUEST.value());
+            return response;
+        }
+        // check if the two new passwords are the same
+        if (!changePasswordDTO.getNewPassword().equals(changePasswordDTO.getConfirmationPassword())) {
+            response.setStatus("error");
+            response.setMessage("new passwords do not match each other");
+            response.setStatusCode(HttpStatus.BAD_REQUEST.value());
+            return response;
+        }
+        user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
+        userRepository.save(user);
+        response.setStatus("success");
+        response.setMessage("Password changed successfully");
+        response.setStatusCode(HttpStatus.OK.value());
+        return response;
+
+    }
+
     private Converter<String, UserType> userTypeConverter(){
         return new Converter<String, UserType>() {
             @Override
@@ -282,9 +301,6 @@ public class UserServiceImpl implements UserService {
 
     }
 
-//    @Override
-//    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-//        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User with email "+ email +" not found"));
-//    }
+
 }
 

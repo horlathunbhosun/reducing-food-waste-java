@@ -6,11 +6,13 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import tech.olatunbosun.wastemanagement.management.models.Transaction;
 import tech.olatunbosun.wastemanagement.usermanagement.utility.enums.UserStatus;
 import tech.olatunbosun.wastemanagement.usermanagement.utility.enums.UserType;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 
 @Getter
 @ToString
@@ -22,8 +24,8 @@ import java.util.Collection;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @Column(name = "full_name", nullable = false)
     private String fullName;
@@ -60,7 +62,14 @@ public class User implements UserDetails {
     @Column(name = "date_updated", nullable = true)
     private LocalDate dateUpdated;
 
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
 
+    @OneToOne(mappedBy = "user")
+    private Partner partner;
+
+    @OneToMany(mappedBy = "user")
+    private List<Transaction> transaction;
 
 
     @Override

@@ -4,30 +4,33 @@ package tech.olatunbosun.wastemanagement.management.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import tech.olatunbosun.wastemanagement.management.utility.enums.PaymentType;
+import tech.olatunbosun.wastemanagement.usermanagement.models.User;
 
 import java.time.LocalDate;
 
+@Data
 @Entity
 @Table(name = "transactions")
 public class Transaction {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    @NotNull
-    @Column(name = "magic_bag_id", nullable = false)
-    private Long magicBagId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "magic_bag_id")
+    private MagicBag magicBag;
 
     @NotNull
     @Column(name = "amount", nullable = false)
     private Double amount;
 
-    @NotNull
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "payment_type", nullable = false)
     private PaymentType paymentType;

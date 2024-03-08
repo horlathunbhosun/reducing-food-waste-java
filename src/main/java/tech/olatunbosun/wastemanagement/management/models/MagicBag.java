@@ -5,8 +5,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Null;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import tech.olatunbosun.wastemanagement.usermanagement.models.Partner;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Getter
@@ -18,14 +20,21 @@ import java.time.LocalDate;
 public class MagicBag {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @Column(name = "bag_price", nullable = false)
     private Double bagPrice;
 
-    @Column(name = "partner_id", nullable = false)
-    private int partnerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "partner_id")
+    private Partner partner;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "magicBag")
+    private List<MagicBagItem> magicBagItems;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "magicBag")
+    private List<Transaction> transactions;
 
     @CreationTimestamp
     @Column(name = "date_created", nullable = false)

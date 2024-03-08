@@ -8,6 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,8 +19,8 @@ import java.time.LocalDate;
 public class Product {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @NotNull
     @Column(name = "name", nullable = false)
@@ -27,6 +28,11 @@ public class Product {
     @Null
     @Column(name = "description", nullable = true)
     private String description;
+
+
+    @ManyToMany(mappedBy = "product")
+    private List<MagicBagItem> magicBagItems;
+
 
     @CreationTimestamp
     @Column(name = "date_created", nullable = false)

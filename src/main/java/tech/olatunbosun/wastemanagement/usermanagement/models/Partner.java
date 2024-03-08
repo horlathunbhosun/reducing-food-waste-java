@@ -7,8 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import tech.olatunbosun.wastemanagement.management.models.MagicBag;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Getter
@@ -21,11 +23,12 @@ public class Partner {
 
 
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    public User user;
 
     @Null
     @Column(name = "brn_number", nullable = true)
@@ -36,6 +39,11 @@ public class Partner {
     @Null
     @Column(name = "address", nullable = true)
     private String address;
+
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "partner")
+    private List<MagicBag> magicBags;
+
 
     @CreationTimestamp
     @Column(name = "date_created", nullable = false)

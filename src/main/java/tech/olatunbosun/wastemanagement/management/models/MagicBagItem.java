@@ -11,6 +11,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Getter
@@ -22,16 +23,20 @@ import java.time.LocalDate;
 public class MagicBagItem {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    @NotNull
-    @Column(name = "magic_bag_id", nullable = false)
-    private Long magicBagId;
+    @ManyToOne
+    @JoinColumn(name = "magic_bag_id")
+    private MagicBag magicBag;
 
-    @NotNull
-    @Column(name = "product_id", nullable = false)
-    private Long productId;
+    @ManyToMany
+    @JoinTable(
+            name = "magic_bag_item_product",
+            joinColumns = @JoinColumn(name = "magic_bag_item_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private List<Product> product;
 
     @NotNull
     @Column(name = "quantity", nullable = false)
