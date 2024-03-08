@@ -4,8 +4,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import tech.olatunbosun.wastemanagement.usermanagement.models.Partner;
 
-@Repository
-public interface PartnerRepository extends JpaRepository<Partner, Long> {
+import java.util.Optional;
 
+@Repository
+public interface PartnerRepository extends JpaRepository<Partner, Integer> {
+
+
+    Optional<Partner> findByUserId(Integer userId);
 
 }

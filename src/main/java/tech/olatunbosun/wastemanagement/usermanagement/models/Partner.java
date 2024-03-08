@@ -2,19 +2,19 @@ package tech.olatunbosun.wastemanagement.usermanagement.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Null;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import tech.olatunbosun.wastemanagement.management.models.MagicBag;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
 @Getter
 @Setter
+@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -30,13 +30,13 @@ public class Partner {
     @JoinColumn(name = "user_id")
     public User user;
 
-    @Null
+
     @Column(name = "brn_number", nullable = true)
     private String brNumber;
-    @Null
+
     @Column(name = "logo", nullable = true)
     private String logo;
-    @Null
+
     @Column(name = "address", nullable = true)
     private String address;
 
@@ -47,11 +47,10 @@ public class Partner {
 
     @CreationTimestamp
     @Column(name = "date_created", nullable = false)
-    private LocalDate dateCreated;
+    private LocalDateTime dateCreated;
 
-    @Null
+
     @Column(name = "date_updated", nullable = true)
-    private LocalDate dateUpdated;
-
+    private LocalDateTime dateUpdated;
 
 }

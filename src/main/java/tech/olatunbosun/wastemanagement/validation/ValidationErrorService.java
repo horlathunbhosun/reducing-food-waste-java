@@ -14,27 +14,13 @@ import java.util.Map;
 @Service
 public class ValidationErrorService {
 
-    public Map<String, String> validate(BindingResult result) {
-        Map<String, String> errors = new HashMap<>();
 
-        for (FieldError error : result.getFieldErrors()) {
-            errors.put(error.getField(), error.getDefaultMessage());
-        }
-
-        return errors;
-    }
 
 
     /**
      * @param bindingResult the result of the validation
      * @return
      */
-    public ResponseEntity<GenericResponseDTO> validationError(BindingResult bindingResult){
-        Map<String, String> errors = validate(bindingResult);
-        GenericResponseDTO errorResponse = new GenericResponseDTO();
-        errorResponse.setStatus("error");
-        errorResponse.setMessage("Validation error occurred");
-        errorResponse.setErrorData(errors);
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
-    }
+
+
 }

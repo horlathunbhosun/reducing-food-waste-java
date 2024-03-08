@@ -1,5 +1,6 @@
 package tech.olatunbosun.wastemanagement.configs;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,7 @@ public class SecurityConfig  {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationProvider authenticationProvider;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     private static final String[] WHITE_LIST_URL = {"/api/v1/auth/**",
             "/v2/api-docs",
@@ -40,6 +42,10 @@ public class SecurityConfig  {
             "/webjars/**",
             "/swagger-ui.html"};
 
+    private static final String[] CHECK_AUTHORIZATION = {
+            "/v1/user/change-password",
+            "/v1/user/refresh-token",
+            };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -48,12 +54,13 @@ public class SecurityConfig  {
            .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
                         .requestMatchers(WHITE_LIST_URL).permitAll())
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
-                        .requestMatchers("/v1/user/profile").authenticated());
+                        .requestMatchers(CHECK_AUTHORIZATION).authenticated());
         http.sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
+        http.exceptionHandling(accessDeniedHandler -> accessDeniedHandler
+                .accessDeniedHandler(customAccessDeniedHandler));
         return http.build();
 
 

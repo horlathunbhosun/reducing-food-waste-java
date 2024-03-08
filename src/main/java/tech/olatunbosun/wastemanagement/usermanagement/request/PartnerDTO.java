@@ -1,22 +1,26 @@
 package tech.olatunbosun.wastemanagement.usermanagement.request;
 
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import tech.olatunbosun.wastemanagement.validation.ValidEmail;
+
+/**
+ * @author olulodeolatunbosun
+ * @created 08/03/2024/03/2024 - 18:19
+ */
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResendVerificationRequestDTO {
+public class PartnerDTO {
 
-    @ValidEmail
-    @JsonProperty("email")
-    private String email;
+    @JsonProperty("brn_number")
+    private String BRNumber;
+    @JsonProperty("logo")
+    private String logo;
+    @JsonProperty("address")
+    private String address;
 }

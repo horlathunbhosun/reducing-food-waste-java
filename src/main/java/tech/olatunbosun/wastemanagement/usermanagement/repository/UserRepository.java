@@ -7,9 +7,9 @@ import tech.olatunbosun.wastemanagement.usermanagement.models.User;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Integer> {
 
-    Optional<User> findById(Long aLong);
+    Optional<User> findById(Integer id);
     Optional<User> findByEmail(String email);
     Optional<User> findByPhoneNumber(String phoneNumber);
 

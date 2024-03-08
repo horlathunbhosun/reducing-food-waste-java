@@ -1,5 +1,7 @@
 package tech.olatunbosun.wastemanagement.usermanagement.services;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.userdetails.UserDetails;
 import tech.olatunbosun.wastemanagement.usermanagement.models.User;
 import tech.olatunbosun.wastemanagement.usermanagement.request.ChangePasswordDTO;
@@ -23,6 +25,12 @@ public interface UserService {
     GenericResponseDTO forgetPassword(String email, String phoneNumber);
     GenericResponseDTO login(LoginDTO loginDTO);
     GenericResponseDTO changePassword(ChangePasswordDTO changePasswordDTO, Principal principal);
+
+    void saveUserToken(User user, String token);
+    void revokeAllUserToken(User user);
+    GenericResponseDTO refreshToken( HttpServletRequest request,
+                       HttpServletResponse response);
+
 //    UserDetails loadUserByUsername(String username);
 
 }

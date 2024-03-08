@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.List;
 
 @Getter
-@ToString
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -62,11 +61,11 @@ public class User implements UserDetails {
     @Column(name = "date_updated", nullable = true)
     private LocalDate dateUpdated;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Token> tokens;
 
-    @OneToOne(mappedBy = "user")
-    private Partner partner;
+//    @OneToOne(mappedBy = "user")
+//    private Partner partner;
 
     @OneToMany(mappedBy = "user")
     private List<Transaction> transaction;

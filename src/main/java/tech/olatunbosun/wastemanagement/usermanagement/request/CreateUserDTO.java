@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import tech.olatunbosun.wastemanagement.usermanagement.utility.enums.UserType;
 import tech.olatunbosun.wastemanagement.validation.EnumValue;
+import tech.olatunbosun.wastemanagement.validation.ValidEmail;
 
 @Getter
 @Setter
@@ -21,8 +22,7 @@ public class CreateUserDTO {
     @JsonProperty("fullname")
     private String fullName;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email should be valid")
+    @ValidEmail
     @JsonProperty("email")
     private String email;
 
@@ -40,11 +40,7 @@ public class CreateUserDTO {
     @EnumValue(enumClass = UserType.class, message = "User type should be either 'waste_warrior' or 'partner' or 'admin'")
     private String userType;
 
-    @JsonProperty("brn_number")
-    private String BRNumber;
-    @JsonProperty("logo")
-    private String logo;
-    @JsonProperty("address")
-    private String address;
+    @JsonProperty("partner")
+    private PartnerDTO partner;
 
 }
