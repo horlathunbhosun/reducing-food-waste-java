@@ -305,6 +305,7 @@ public class UserServiceImpl implements UserService {
             }
             var jwt = jwtService.generateToken(user);
             var refreshToken = jwtService.generateRefreshToken(user);
+            revokeAllUserToken(user);
 
             saveUserToken(user, jwt);
             //check if user is a partner

@@ -12,10 +12,12 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import tech.olatunbosun.wastemanagement.configs.filters.JwtAuthenticationFilter;
 import tech.olatunbosun.wastemanagement.usermanagement.services.UserServiceImpl;
 
@@ -27,6 +29,7 @@ public class SecurityConfig  {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationProvider authenticationProvider;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final LogoutHandler logoutHandler;
 
     private static final String[] WHITE_LIST_URL = {"/api/v1/auth/**",
             "/v2/api-docs",
@@ -60,7 +63,14 @@ public class SecurityConfig  {
         http.authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.exceptionHandling(accessDeniedHandler -> accessDeniedHandler
-                .accessDeniedHandler(customAccessDeniedHandler));
+                .accessDeniedHandler(customAccessDeniedHandler))
+                .logout(logout -> logout
+                        .logoutUrl("/v1/user/logout")
+                        .addLogoutHandler(logoutHandler)
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                            SecurityContextHolder.clearContext();
+                        }));
         return http.build();
 
 
