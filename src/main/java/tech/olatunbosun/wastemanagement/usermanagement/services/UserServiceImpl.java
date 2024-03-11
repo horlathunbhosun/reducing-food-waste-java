@@ -99,8 +99,6 @@ public class UserServiceImpl implements UserService {
         }
         user.setVerificationCode(verificationToken);
         user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
-
-        System.out.println(user.toString());
         try {
             Partner partner = null;
 
@@ -168,21 +166,6 @@ public class UserServiceImpl implements UserService {
         return responseDTO;
     }
 
-    @Override
-    public UserResponseDTO updateUser(User user) {
-
-        return null;
-    }
-
-    @Override
-    public UserResponseDTO findUserById(Long id) {
-        return null;
-    }
-
-    @Override
-    public UserResponseDTO findUserByEmail(String email) {
-        return null;
-    }
 
     @Override
     public GenericResponseDTO verifyUser(String token) {

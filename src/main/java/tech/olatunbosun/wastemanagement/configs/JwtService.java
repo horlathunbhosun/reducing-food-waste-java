@@ -33,14 +33,6 @@ public class JwtService {
         return generateToken(new HashMap<>(), userDetails);
     }
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-//        return Jwts.builder()
-//                .claims(extraClaims)
-//                .subject(userDetails.getUsername())
-//                .issuedAt(new Date(System.currentTimeMillis()))
-//                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
-//                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-//                .compact();
-
         return buildToken(extraClaims, userDetails, jwtExpiration);
 
     }

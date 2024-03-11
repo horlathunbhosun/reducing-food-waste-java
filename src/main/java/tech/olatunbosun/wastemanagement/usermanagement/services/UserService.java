@@ -15,9 +15,9 @@ import java.security.Principal;
 public interface UserService {
 
     GenericResponseDTO saveUser(CreateUserDTO createUserDTO);
-    UserResponseDTO updateUser(User user);
-    UserResponseDTO findUserById(Long id);
-    UserResponseDTO findUserByEmail(String email);
+//    UserResponseDTO updateUser(User user);
+//    UserResponseDTO findUserById(Long id);
+//    UserResponseDTO findUserByEmail(String email);
 
     GenericResponseDTO verifyUser(String token);
     GenericResponseDTO resendVerificationToken(String email);
