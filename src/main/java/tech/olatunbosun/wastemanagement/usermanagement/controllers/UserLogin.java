@@ -2,6 +2,7 @@ package tech.olatunbosun.wastemanagement.usermanagement.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,7 @@ public class UserLogin {
     private final UserServiceImpl userService;
 
     @PostMapping("/user/login")
-    public ResponseEntity<GenericResponseDTO> login(@RequestBody LoginDTO loginDTO, BindingResult bindingResult) {
+    public ResponseEntity<GenericResponseDTO> login(@Valid @RequestBody LoginDTO loginDTO, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()){
             return validate(bindingResult);

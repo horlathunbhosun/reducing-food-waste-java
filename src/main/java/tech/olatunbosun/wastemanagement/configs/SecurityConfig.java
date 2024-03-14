@@ -48,7 +48,7 @@ public class SecurityConfig  {
     private static final String[] CHECK_AUTHORIZATION = {
             "/v1/user/change-password",
             "/v1/user/refresh-token",
-            };
+    };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
