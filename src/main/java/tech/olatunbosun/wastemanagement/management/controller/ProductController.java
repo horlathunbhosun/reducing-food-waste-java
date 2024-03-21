@@ -6,10 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tech.olatunbosun.wastemanagement.management.requests.ProductRequestDTO;
 import tech.olatunbosun.wastemanagement.management.respository.ProductRepository;
 import tech.olatunbosun.wastemanagement.management.services.ProductServiceImpl;
@@ -32,6 +29,8 @@ public class ProductController {
     private final ProductServiceImpl productService;
 
 
+
+    @PostMapping("/create")
     public ResponseEntity<GenericResponseDTO> createProduct(@Valid @RequestBody ProductRequestDTO productRequestDto, BindingResult bindingResult) {
 
         GenericResponseDTO responseDTO = new GenericResponseDTO();
