@@ -19,6 +19,12 @@ public interface ProductService {
 
     GenericResponseDTO  editProduct(ProductRequestDTO productRequestDto);
 
+    GenericResponseDTO deleteProduct(ProductRequestDTO productRequestDto);
+
+    GenericResponseDTO getProductById(ProductRequestDTO productRequestDto);
+
+    GenericResponseDTO getAllProducts();
+
 
 }
 

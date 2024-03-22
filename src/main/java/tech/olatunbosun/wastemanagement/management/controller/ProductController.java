@@ -33,20 +33,24 @@ public class ProductController {
     @PostMapping("/create")
     public ResponseEntity<GenericResponseDTO> createProduct(@Valid @RequestBody ProductRequestDTO productRequestDto, BindingResult bindingResult) {
 
-        GenericResponseDTO responseDTO = new GenericResponseDTO();
         if (bindingResult.hasErrors()){
             return validate(bindingResult);
         }
-        if (productService.createProduct(productRequestDto).getStatusCode() == HttpStatus.CREATED.value()){
-            responseDTO.setStatus("success");
-            responseDTO.setMessage("Product created successfully");
-            responseDTO.setStatusCode(HttpStatus.CREATED.value());
+
+        GenericResponseDTO responseDTO = productService.createProduct(productRequestDto);
+        if (responseDTO.getStatusCode() == HttpStatus.CREATED.value()){
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
         }
+
         responseDTO.setStatus("error");
         responseDTO.setMessage("Product not created");
         responseDTO.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDTO);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<GenericResponseDTO> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
 

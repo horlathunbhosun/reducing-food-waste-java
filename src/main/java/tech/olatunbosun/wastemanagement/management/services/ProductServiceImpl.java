@@ -1,6 +1,8 @@
 package tech.olatunbosun.wastemanagement.management.services;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import tech.olatunbosun.wastemanagement.management.models.Product;
@@ -15,10 +17,11 @@ import tech.olatunbosun.wastemanagement.usermanagement.response.GenericResponseD
 
 
 @RequiredArgsConstructor
+@AllArgsConstructor
 @Service
 public class ProductServiceImpl implements ProductService{
 
-    private static ProductRepository productRepository;
+    private  ProductRepository productRepository;
     @Override
     public GenericResponseDTO createProduct(ProductRequestDTO productRequestDto) {
 
@@ -40,5 +43,25 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public GenericResponseDTO editProduct(ProductRequestDTO productRequestDto) {
         return null;
+    }
+
+    @Override
+    public GenericResponseDTO deleteProduct(ProductRequestDTO productRequestDto) {
+        return null;
+    }
+
+    @Override
+    public GenericResponseDTO getProductById(ProductRequestDTO productRequestDto) {
+        return null;
+    }
+
+    @Override
+    public GenericResponseDTO getAllProducts() {
+        GenericResponseDTO responseDTO = new GenericResponseDTO();
+        responseDTO.setStatus("success");
+        responseDTO.setMessage("All products fetched successfully");
+        responseDTO.setStatusCode(HttpStatus.OK.value());
+        responseDTO.setData(productRepository.findAll());
+        return responseDTO;
     }
 }
