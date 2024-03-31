@@ -53,9 +53,6 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllProducts());
     }
 
-
-
-
     public ResponseEntity<GenericResponseDTO> validate(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
         for (FieldError error : result.getFieldErrors()) {
