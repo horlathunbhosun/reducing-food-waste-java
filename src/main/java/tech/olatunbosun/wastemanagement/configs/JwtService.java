@@ -19,8 +19,6 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-//    @Value("${jwt.secret}")
-//    public static String SECRET_KEY = "HGDeNsQr2wLct3lLxp6a9NjK2t5uHAaZ0djJMVNaOp4W2nwb3BVDV6bdvFrijr7M";
 
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
@@ -92,7 +90,6 @@ public class JwtService {
                 .getBody()
                 .getSubject();
     }
-
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
