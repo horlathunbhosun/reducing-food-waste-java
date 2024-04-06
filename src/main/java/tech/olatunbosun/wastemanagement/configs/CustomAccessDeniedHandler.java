@@ -18,6 +18,8 @@ import java.io.PrintWriter;
 
 @Service
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+
+    // This method is called whenever an authenticated user tries to access a resource they are not authorized to access
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
         response.setContentType("application/json"); // Set content type to JSON
