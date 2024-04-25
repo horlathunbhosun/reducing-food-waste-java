@@ -10,6 +10,8 @@ import tech.olatunbosun.wastemanagement.management.requests.ProductRequestDTO;
 import tech.olatunbosun.wastemanagement.management.respository.ProductRepository;
 import tech.olatunbosun.wastemanagement.usermanagement.response.GenericResponseDTO;
 
+import java.util.Optional;
+
 /**
  * @author olulodeolatunbosun
  * @created 12/03/2024/03/2024 - 13:16
@@ -36,28 +38,59 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public GenericResponseDTO updateProduct(ProductRequestDTO productRequestDto) {
-        return null;
+    public GenericResponseDTO updateProduct(ProductRequestDTO productRequestDto, Integer productId) {
+        GenericResponseDTO responseDTO = new GenericResponseDTO();
+       Optional<Product> product = productRepository.findById(productId);
+        if (product.isPresent()) {
+            product.get().setName(productRequestDto.getName());
+            product.get().setDescription(productRequestDto.getDescription());
+            productRepository.save(product.get());
+            responseDTO.setStatus("success");
+            responseDTO.setMessage("Product updated successfully");
+            responseDTO.setStatusCode(HttpStatus.OK.value());
+            responseDTO.setData(product.get());
+        }else{
+            responseDTO.setStatus("error");
+            responseDTO.setMessage("Product not found");
+            responseDTO.setStatusCode(HttpStatus.NOT_FOUND.value());
+        }
+        return responseDTO;
+
+    }
+
+
+    @Override
+    public GenericResponseDTO deleteProduct(Integer productId) {
+        GenericResponseDTO responseDTO = new GenericResponseDTO();
+        Optional<Product> product = productRepository.findById(productId);
+        if (product.isPresent()) {
+            productRepository.delete(product.get());
+            responseDTO.setStatus("success");
+            responseDTO.setMessage("Product deleted successfully");
+            responseDTO.setStatusCode(HttpStatus.OK.value());
+        }else{
+            responseDTO.setStatus("error");
+            responseDTO.setMessage("Product not found");
+            responseDTO.setStatusCode(HttpStatus.NOT_FOUND.value());
+        }
+        return responseDTO;
     }
 
     @Override
-    public GenericResponseDTO editProduct(ProductRequestDTO productRequestDto) {
-
-        //TODO: Implement this method
-        return null;
-
-    }
-
-    @Override
-    public GenericResponseDTO deleteProduct(ProductRequestDTO productRequestDto) {
-        //TODO: Implement this method
-        return null;
-    }
-
-    @Override
-    public GenericResponseDTO getProductById(ProductRequestDTO productRequestDto) {
-        //TODO: Implement this method
-        return null;
+    public GenericResponseDTO getProductById(Integer productRequestDto) {
+      Optional<Product> product = productRepository.findById(productRequestDto);
+        GenericResponseDTO responseDTO = new GenericResponseDTO();
+        if (product.isPresent()) {
+            responseDTO.setStatus("success");
+            responseDTO.setMessage("Product fetched successfully");
+            responseDTO.setStatusCode(HttpStatus.OK.value());
+            responseDTO.setData(product.get());
+        }else{
+            responseDTO.setStatus("error");
+            responseDTO.setMessage("Product not found");
+            responseDTO.setStatusCode(HttpStatus.NOT_FOUND.value());
+        }
+        return responseDTO;
     }
 
     @Override

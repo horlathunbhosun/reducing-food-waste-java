@@ -15,13 +15,12 @@ public interface ProductService {
     GenericResponseDTO createProduct(ProductRequestDTO productRequestDto);
 
 
-    GenericResponseDTO updateProduct(ProductRequestDTO productRequestDto);
+    GenericResponseDTO updateProduct(ProductRequestDTO productRequestDto, Integer productId);
 
-    GenericResponseDTO  editProduct(ProductRequestDTO productRequestDto);
 
-    GenericResponseDTO deleteProduct(ProductRequestDTO productRequestDto);
+    GenericResponseDTO deleteProduct(Integer productId);
 
-    GenericResponseDTO getProductById(ProductRequestDTO productRequestDto);
+    GenericResponseDTO getProductById(Integer productId);
 
     GenericResponseDTO getAllProducts();
 

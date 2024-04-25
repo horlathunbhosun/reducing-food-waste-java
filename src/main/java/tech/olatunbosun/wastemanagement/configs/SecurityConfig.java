@@ -48,6 +48,8 @@ public class SecurityConfig  {
     private static final String[] CHECK_AUTHORIZATION = {
             "/v1/user/change-password",
             "/v1/user/refresh-token",
+            "/v1/user/logout",
+            "v1/products/**",
     };
 
     @Bean
