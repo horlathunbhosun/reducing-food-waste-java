@@ -48,4 +48,6 @@ public class ApplicationConfig {
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
+
 }
