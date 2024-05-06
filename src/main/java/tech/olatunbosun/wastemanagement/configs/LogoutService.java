@@ -36,10 +36,5 @@ public class LogoutService implements LogoutHandler {
         }
 
 
-//
-//
-//        if (token != null && token.startsWith("Bearer ")) {
-//            // do something with the token
-//        }
     }
 }
