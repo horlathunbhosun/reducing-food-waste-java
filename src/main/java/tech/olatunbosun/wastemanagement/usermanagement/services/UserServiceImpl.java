@@ -1,13 +1,13 @@
 package tech.olatunbosun.wastemanagement.usermanagement.services;
 
-import jakarta.mail.MessagingException;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,10 +20,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionException;
-import org.springframework.transaction.annotation.Transactional;
 import tech.olatunbosun.wastemanagement.configs.JwtService;
-import tech.olatunbosun.wastemanagement.usermanagement.mail.VerificationMail;
+import tech.olatunbosun.wastemanagement.emailservice.dto.EmailDetailDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.models.Partner;
 import tech.olatunbosun.wastemanagement.usermanagement.models.Token;
 import tech.olatunbosun.wastemanagement.usermanagement.models.User;
@@ -42,7 +40,6 @@ import tech.olatunbosun.wastemanagement.usermanagement.utility.enums.UserStatus;
 import tech.olatunbosun.wastemanagement.usermanagement.utility.enums.UserType;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -54,20 +51,27 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class UserServiceImpl implements UserService {
 
 
-   private final UserRepository userRepository;
-  private final  PartnerRepository partnerRepository;
-  private final  ModelMapper modelMapper;
-   private final VerificationMail verificationMail;
+    private final UserRepository userRepository;
+    private final  PartnerRepository partnerRepository;
+    private final  ModelMapper modelMapper;
+//    private final VerificationMail verificationMail;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final TokenRepository tokenRepository;
     @Value("${application.security.jwt.expiration}")
     private long jwtExpiration;
+    private final RabbitTemplate rabbitTemplate;
+
+    @Value("${rabbitmq.exchange.email.name}")
+    private String emailExchange;
+
+    @Value("${rabbitmq.binding.email.name}")
+    private String emailRoutingKey;
 
 
-    @Transactional
     @Override
+    @Transactional
     public GenericResponseDTO saveUser(CreateUserDTO createUserDTO) {
         String verificationToken = TokenGenerator.generateToken(6);
         modelMapper.addConverter(userTypeConverter());
@@ -121,12 +125,25 @@ public class UserServiceImpl implements UserService {
             }
 
 
-            Map<String, Object> mailData = Map.of("verificationToken", verificationToken, "fullName", user.getFullName());
-            try {
-                verificationMail.sendVerificationEmail(user.getEmail(), mailData);
-            } catch (MessagingException e) {
-                e.printStackTrace();
-            }
+            sendEmail(user, verificationToken, "Email Verification");
+
+
+//            Map<String, Object> mailData = Map.of("verificationToken", verificationToken, "fullName", user.getFullName());
+////            try {
+//                rabbitTemplate.convertAndSend(emailExchange, emailRoutingKey, EmailDetailDTO.builder()
+//                        .to(user.getEmail())
+//                        .subject("Email Verification")
+//                        .dynamicValue(mailData)
+//                        .build());
+
+//                verificationMail.sendVerificationEmail(user.getEmail(), EmailDetailDTO.builder()
+//                        .to(user.getEmail())
+//                        .subject("Email Verification")
+//                        .dynamicValue(mailData)
+////                        .build());
+//            } catch (MessagingException e) {
+//                e.printStackTrace();
+//            }
 
             var jwt = jwtService.generateToken(user);
             var refreshToken = jwtService.generateRefreshToken(user);
@@ -211,15 +228,16 @@ public class UserServiceImpl implements UserService {
                 responseDTO.setStatusCode(HttpStatus.BAD_REQUEST.value());
                 return responseDTO;
             }
-            String verificationToken = TokenGenerator.generateToken(6);
-            user.setVerificationCode(verificationToken);
+            String token  = TokenGenerator.generateToken(6);
+            user.setVerificationCode(token);
             userRepository.save(user);
-            Map<String, Object> mailData = Map.of("verificationToken", verificationToken, "fullName", user.getFullName());
-            try {
-                verificationMail.sendVerificationEmail(user.getEmail(), mailData);
-            } catch (MessagingException e) {
-                e.printStackTrace();
-            }
+            sendEmail(user, token, "Email Verification Resend");
+//            Map<String, Object> mailData = Map.of("verificationToken", verificationToken, "fullName", user.getFullName());
+//            try {
+//                verificationMail.sendVerificationEmail(user.getEmail(), mailData);
+//            } catch (MessagingException e) {
+//                e.printStackTrace();
+//            }
             responseDTO.setMessage("Verification token sent successfully");
             responseDTO.setStatus("success");
             responseDTO.setStatusCode(HttpStatus.OK.value());
@@ -237,15 +255,18 @@ public class UserServiceImpl implements UserService {
         if (email != null){
             if(userRepository.findByEmail(email).isPresent()){
                 User user = userRepository.findByEmail(email).get();
-                String verificationToken = TokenGenerator.generateToken(6);
-                user.setVerificationCode(verificationToken);
+                String token = TokenGenerator.generateToken(6);
+                user.setVerificationCode(token);
                 userRepository.save(user);
-                Map<String, Object> mailData = Map.of("verificationToken", verificationToken, "fullName", user.getFullName());
-                try {
-                    verificationMail.sendVerificationEmail(user.getEmail(), mailData);
-                } catch (MessagingException e) {
-                    e.printStackTrace();
-                }
+
+                sendEmail(user, token, "Forget password token");
+
+//                Map<String, Object> mailData = Map.of("verificationToken", verificationToken, "fullName", user.getFullName());
+//                try {
+//                    verificationMail.sendVerificationEmail(user.getEmail(), mailData);
+//                } catch (MessagingException e) {
+//                    e.printStackTrace();
+//                }
                 responseDTO.setMessage("Verification token sent successfully");
                 responseDTO.setStatus("success");
                 responseDTO.setStatusCode(HttpStatus.OK.value());
@@ -422,6 +443,18 @@ public class UserServiceImpl implements UserService {
             }
         };
 
+    }
+
+
+    private void sendEmail(User user, String token, String subject){
+        Map<String, Object> mailData = Map.of("token", token, "fullName", user.getFullName());
+
+        rabbitTemplate.convertAndSend(emailExchange, emailRoutingKey, EmailDetailDTO.builder()
+                .to(user.getEmail())
+                .subject(subject)
+                .dynamicValue(mailData)
+                .templateName("verification")
+                .build());
     }
 
 
