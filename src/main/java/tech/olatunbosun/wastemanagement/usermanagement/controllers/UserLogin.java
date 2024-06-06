@@ -63,15 +63,6 @@ public class UserLogin {
 
 
     public ResponseEntity<GenericResponseDTO> validate(BindingResult result) {
-        Map<String, String> errors = new HashMap<>();
-        for (FieldError error : result.getFieldErrors()) {
-            errors.put(error.getField(), error.getDefaultMessage());
-        }
-        GenericResponseDTO errorResponse = new GenericResponseDTO();
-        errorResponse.setStatus("error");
-        errorResponse.setMessage("Validation error occurred");
-        errorResponse.setErrorMessage(errors);
-        errorResponse.setStatusCode(HttpStatus.UNPROCESSABLE_ENTITY.value());
-        return ResponseEntity.unprocessableEntity().body(errorResponse);
+        return getGenericResponseDTOResponseEntity(result);
     }
 }

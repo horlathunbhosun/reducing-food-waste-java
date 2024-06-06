@@ -28,6 +28,7 @@ public class JwtService {
     private long refreshExpiration;
 
     public String generateToken(UserDetails userDetails) {
+        Map<String, String> userData  = new HashMap<>();
         return generateToken(new HashMap<>(), userDetails);
     }
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {

@@ -16,10 +16,6 @@ public interface UserService {
 
 
     GenericResponseDTO saveUser(CreateUserDTO createUserDTO);
-//    UserResponseDTO updateUser(User user);
-//    UserResponseDTO findUserById(Long id);
-//    UserResponseDTO findUserByEmail(String email);
-
     GenericResponseDTO verifyUser(String token);
     GenericResponseDTO resendVerificationToken(String email);
 
@@ -32,6 +28,5 @@ public interface UserService {
     GenericResponseDTO refreshToken( HttpServletRequest request,
                        HttpServletResponse response);
 
-//    UserDetails loadUserByUsername(String username);
 
 }

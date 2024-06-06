@@ -125,6 +125,10 @@ public class UserRegistration {
 
 
     public ResponseEntity<GenericResponseDTO> validate(BindingResult result) {
+        return getGenericResponseDTOResponseEntity(result);
+    }
+
+    public static ResponseEntity<GenericResponseDTO> getGenericResponseDTOResponseEntity(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
         for (FieldError error : result.getFieldErrors()) {
             errors.put(error.getField(), error.getDefaultMessage());
@@ -136,8 +140,6 @@ public class UserRegistration {
         errorResponse.setStatusCode(HttpStatus.UNPROCESSABLE_ENTITY.value());
         return ResponseEntity.unprocessableEntity().body(errorResponse);
     }
-
-
 
 
 }

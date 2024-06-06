@@ -51,15 +51,12 @@ public class EmailService {
     }
 
 
-
     public String generateEmailBody(EmailDetailDTO emailDetailDTO) {
-        String templateName = "verification"; // or some other template name
+        String templateName = emailDetailDTO.getTemplateName();  // or some other template name
         String template = loadEmailTemplate(templateName);
 
         // Replace placeholders with actual values from EmailDetailDTO
         String body = template;
-//        body = body.replace("{{to}}", emailDetailDTO.getTo());
-//        body = body.replace("{{subject}}", emailDetailDTO.getSubject());
 
         // If there are additional dynamic values
         if (emailDetailDTO.getDynamicValue() != null) {
