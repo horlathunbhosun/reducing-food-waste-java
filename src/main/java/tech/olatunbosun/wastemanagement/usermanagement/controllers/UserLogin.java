@@ -27,6 +27,8 @@ import tech.olatunbosun.wastemanagement.validation.ValidationErrorService;
 import java.util.HashMap;
 import java.util.Map;
 
+import static tech.olatunbosun.wastemanagement.usermanagement.utility.UtilityClass.getGenericResponseDTOResponseEntity;
+
 @RestController
 @RequestMapping("v1/")
 @RequiredArgsConstructor

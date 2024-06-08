@@ -25,6 +25,8 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
+import static tech.olatunbosun.wastemanagement.usermanagement.utility.UtilityClass.getGenericResponseDTOResponseEntity;
+
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "User Registration", description = "User Registration and Verification")
@@ -128,18 +130,7 @@ public class UserRegistration {
         return getGenericResponseDTOResponseEntity(result);
     }
 
-    public static ResponseEntity<GenericResponseDTO> getGenericResponseDTOResponseEntity(BindingResult result) {
-        Map<String, String> errors = new HashMap<>();
-        for (FieldError error : result.getFieldErrors()) {
-            errors.put(error.getField(), error.getDefaultMessage());
-        }
-        GenericResponseDTO errorResponse = new GenericResponseDTO();
-        errorResponse.setStatus("error");
-        errorResponse.setMessage("Validation error occurred");
-        errorResponse.setErrorMessage(errors);
-        errorResponse.setStatusCode(HttpStatus.UNPROCESSABLE_ENTITY.value());
-        return ResponseEntity.unprocessableEntity().body(errorResponse);
-    }
+
 
 
 }

@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static tech.olatunbosun.wastemanagement.usermanagement.utility.UtilityClass.getGenericResponseDTOResponseEntity;
+
 /**
  * @author olulodeolatunbosun
  * @created 12/03/2024/03/2024 - 13:59
