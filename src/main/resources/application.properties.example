@@ -9,3 +9,55 @@ spring.jpa.hibernate.ddl-auto=update
 //google api key
 
 
+
+
+server.port=9090
+
+
+spring.datasource.url=jdbc:sqlserver://wastedbb.database.windows.net:1433;database=wastedb;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+#  jdbc:mysql://localhost:3306/wastemanagement?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+#spring.datasource.url=jdbc:mysql://localhost:3306/wastemanagement?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+#spring.datasource.username=root
+#spring.datasource.password=olatunbosun
+
+spring.datasource.username=AdminOla@wastedbb
+spring.datasource.password=Olatunbosun02@
+
+#AdminOla
+#Olatunbosun02@
+
+#spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+spring.jpa.database-platform=org.hibernate.dialect.SQLServer2012Dialect
+#spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.security.user.name=user
+spring.security.user.password=password
+# Mailtrap SMTP settings
+
+jwt.secret=HGDeNsQr2wLct3lLxp6a9NjK2t5uHAaZ0djJMVNaOp4W2nwb3BVDV6bdvFrijr7M
+#spring.data.rest.base-path=/v1
+spring.mail.host=sandbox.smtp.mailtrap.io
+spring.mail.port=587
+spring.mail.username=6be7b0bd588d81
+spring.mail.password=39c49cb87d598c
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+application.mail.sent.from=no-reply@food.com
+application.security.jwt.secret-key=HGDeNsQr2wLct3lLxp6a9NjK2t5uHAaZ0djJMVNaOp4W2nwb3BVDV6bdvFrijr7M
+application.security.jwt.expiration=86400000
+application.security.jwt.refresh-token.expiration=604800000
+spring.rabbitmq.host=localhost
+spring.rabbitmq.port=5672
+spring.rabbitmq.username=myuser
+spring.rabbitmq.password=mypassword
+rabbitmq.queue.email.name=email_queue
+rabbitmq.exchange.email.name=email_exchange
+rabbitmq.binding.email.name=email_routing_key
+logging.level.org.springframework.transaction=DEBUG
+logging.level.org.springframework.orm.jpa=DEBUG
+#makesure i set the username and password in the application.properties file
+#export RABBITMQ_USER=myuser
+#export RABBITMQ_PASS=mypassword
+
