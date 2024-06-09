@@ -11,11 +11,12 @@ jobs:
     name: deploy to production with artifact
     steps:
       - name: Checkout Github Action
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
+          distribution: 'temurin'
           java-version: ${{ env.JAVA_VERSION }}
 
       - name: maven build, clean
@@ -26,6 +27,14 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Verify Azure Spring Cloud service existence
+        run: |
+          az spring-cloud service show --name spring-api-data --resource-group ola --subscription ${{ env.AZURE_SUBSCRIPTION }}
+
+      - name: Verify Azure Spring Cloud app existence
+        run: |
+          az spring-cloud app show --service spring-api-data --name waste-data-api --resource-group ola --subscription ${{ env.AZURE_SUBSCRIPTION }}
 
       - name: deploy to production with artifact
         uses: azure/spring-cloud-deploy@v1
