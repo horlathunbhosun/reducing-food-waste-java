@@ -28,13 +28,17 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Install Azure Spring Cloud extension
+        run: |
+          az extension add --name spring
+
       - name: Verify Azure Spring Cloud service existence
         run: |
-          az spring-cloud service show --name spring-api-data --resource-group ola --subscription ${{ env.AZURE_SUBSCRIPTION }}
+          az spring cloud show --name spring-api-data --resource-group ola --subscription ${{ env.AZURE_SUBSCRIPTION }}
 
       - name: Verify Azure Spring Cloud app existence
         run: |
-          az spring-cloud app show --service spring-api-data --name waste-data-api --resource-group ola --subscription ${{ env.AZURE_SUBSCRIPTION }}
+          az spring cloud app show --service spring-api-data --name waste-data-api --resource-group ola --subscription ${{ env.AZURE_SUBSCRIPTION }}
 
       - name: deploy to production with artifact
         uses: azure/spring-cloud-deploy@v1
