@@ -1,7 +1,8 @@
 server.port=9090
-spring.datasource.url=${SPRING_DATASOURCE_URL}
-spring.datasource.username=${SPRING_DATASOURCE_USERNAME}
-spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}
+spring.datasource.url=jdbc:sqlserver://wastedbb.database.windows.net:1433;database=wastedb;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+spring.datasource.username=AdminOla@wastedbb
+spring.datasource.password=Olatunbosun02@
+
 spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
 spring.jpa.database-platform=org.hibernate.dialect.SQLServer2012Dialect
 spring.jpa.hibernate.ddl-auto=update
