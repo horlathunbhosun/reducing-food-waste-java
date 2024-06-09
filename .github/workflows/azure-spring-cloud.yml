@@ -32,7 +32,7 @@ jobs:
         with:
           azure-subscription: ${{ env.AZURE_SUBSCRIPTION }}
           action: Deploy
-          service-name: wastemanagement
-          app-name: waste-product-application
+          service-name: spring-api-data
+          app-name: waste-data-api
           use-staging-deployment: false
           package: ${{ env.ASC_PACKAGE_PATH }}/**/*.jar
