@@ -1,11 +1,12 @@
 ## Project Topic : Reducing Food Waste
 
 
+
 ### Project Description
 # Context
 
 The startup's goal is to create a smartphone application that eliminates the issue of food waste by providing a platform for businesses (restaurants, cafés, and food trucks) to sell extra, but completely edible, food to environmentally conscientious individuals known as "waste warriors." The businesses, referred to as partners, will sell bags of leftover food, dubbed "magic bags," via the app. Waste warriors can purchase these magical bags at a bargain, but the contents are undisclosed until they choose the bag. Waste warriors can rate partners after each transaction to encourage participation and obtain feedback. Some limitations are in place, including restricting a waste warrior to one purchase per day with a specific partner and preventing the purchase of multiple bags from the same partner on the same day.
-
+thanks
 ## Data Dictionary
 
 For this system, six tables are defined:
