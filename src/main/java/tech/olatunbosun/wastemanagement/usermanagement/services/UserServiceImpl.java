@@ -162,7 +162,7 @@ public class UserServiceImpl implements UserService {
             responseDTO.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return responseDTO;
         } catch (Exception e) {
-            responseDTO.setMessage("An error occurred: " + e.getMessage());
+            responseDTO.setMessage("An error occurred: " + e.getMessage() + " " + e.getClass().getName() + " " + e.getCause() + " " + e);
             responseDTO.setStatus("error");
             responseDTO.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return responseDTO;
