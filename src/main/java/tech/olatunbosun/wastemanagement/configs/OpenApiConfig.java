@@ -32,7 +32,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 ),
                 @Server(
                         description = "PROD ENV",
-                        url = "olaolulode.xyz"
+                        url = "https://spring-api-data-waste-data-api.azuremicroservices.io/"
                 )
         },
         security = {
