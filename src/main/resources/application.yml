@@ -28,10 +28,10 @@ spring:
           starttls:
             enable: true
   rabbitmq:
-    host: localhost
+    host: goose-01.rmq2.cloudamqp.com
     port: 5672
-    username: myuser
-    password: mypassword
+    username: gatgunnd
+    password: bY1VRqcDh9sicHsEeTkF50QpJvBIOQlr
 
 jwt:
   secret: HGDeNsQr2wLct3lLxp6a9NjK2t5uHAaZ0djJMVNaOp4W2nwb3BVDV6bdvFrijr7M
