@@ -34,7 +34,7 @@ jobs:
 
       - name: Verify Azure Spring Apps service existence
         run: |
-          az spring service show --name spring-api-data --resource-group ola --subscription ${{ env.AZURE_SUBSCRIPTION }}
+          az spring  show --name spring-api-data --resource-group ola --subscription ${{ env.AZURE_SUBSCRIPTION }}
 
       - name: Verify Azure Spring Apps app existence
         run: |
