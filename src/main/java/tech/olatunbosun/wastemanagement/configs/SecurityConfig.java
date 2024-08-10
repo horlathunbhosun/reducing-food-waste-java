@@ -59,7 +59,8 @@ public class SecurityConfig  {
            .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
                         .requestMatchers(WHITE_LIST_URL).permitAll())
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
-                        .requestMatchers(CHECK_AUTHORIZATION).authenticated());
+                        .requestMatchers(CHECK_AUTHORIZATION).authenticated()
+                        );
         http.sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authenticationProvider(authenticationProvider)

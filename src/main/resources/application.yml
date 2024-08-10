@@ -3,12 +3,17 @@ server:
 
 spring:
   datasource:
-    url: jdbc:sqlserver://wastedbb.database.windows.net:1433;database=wastedb;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
-    username: AdminOla@wastedbb
-    password: Olatunbosun02@
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: jdbc:mysql://localhost:3306/wastemanagement?useSSL=false&serverTimezone=UTC
+   # url: jdbc:sqlserver://wastedbb.database.windows.net:1433;database=wastedb;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+    username: root
+   # username: AdminOla@wastedbbclea
+    password: olatunbosun
+   # password: Olatunbosun02@
+    driver-class-name: com.mysql.cj.jdbc.Driver
+   # driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
   jpa:
-    database-platform: org.hibernate.dialect.SQLServer2012Dialect
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+   # database-platform: org.hibernate.dialect.SQLServer2012Dialect
     hibernate:
       ddl-auto: update
     show-sql: true
@@ -28,10 +33,13 @@ spring:
           starttls:
             enable: true
   rabbitmq:
-    host: goose-01.rmq2.cloudamqp.com
+    host: localhost
+   # host: goose-01.rmq2.cloudamqp.com
     port: 5672
-    username: gatgunnd
-    password: bY1VRqcDh9sicHsEeTkF50QpJvBIOQlr
+    username: myuser
+   # username: gatgunnd
+    password: mypassword
+   # password: bY1VRqcDh9sicHsEeTkF50QpJvBIOQlr
 
 jwt:
   secret: HGDeNsQr2wLct3lLxp6a9NjK2t5uHAaZ0djJMVNaOp4W2nwb3BVDV6bdvFrijr7M

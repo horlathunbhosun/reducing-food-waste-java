@@ -323,6 +323,7 @@ public class UserServiceImpl implements UserService {
             response.setStatus("success");
             response.setStatusCode(HttpStatus.OK.value());
             response.setToken(JwtTokenDTO.data(jwt, TokenType.BEARER.name(), (int) jwtExpiration,refreshToken));
+
         } catch (AuthenticationException e){
             response.setStatus("error");
             response.setMessage(e.getMessage());
@@ -341,10 +342,7 @@ public class UserServiceImpl implements UserService {
             response.setStatusCode(HttpStatus.UNAUTHORIZED.value());
             return response;
         }
-
         var user = (User) ((UsernamePasswordAuthenticationToken) loggedInUser).getPrincipal();
-
-
         if (!passwordEncoder.matches(changePasswordDTO.getCurrentPassword(), user.getPassword())) {
             response.setStatus("error");
             response.setMessage("Validation error occurred");
