@@ -260,13 +260,6 @@ public class UserServiceImpl implements UserService {
                 userRepository.save(user);
 
                 sendEmail(user, token, "Forget password token");
-
-//                Map<String, Object> mailData = Map.of("verificationToken", verificationToken, "fullName", user.getFullName());
-//                try {
-//                    verificationMail.sendVerificationEmail(user.getEmail(), mailData);
-//                } catch (MessagingException e) {
-//                    e.printStackTrace();
-//                }
                 responseDTO.setMessage("Verification token sent successfully");
                 responseDTO.setStatus("success");
                 responseDTO.setStatusCode(HttpStatus.OK.value());
