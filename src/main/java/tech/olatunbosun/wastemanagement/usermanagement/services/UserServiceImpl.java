@@ -271,7 +271,7 @@ public class UserServiceImpl implements UserService {
                 String verificationToken = TokenGenerator.generateToken(6);
                 user.setVerificationCode(verificationToken);
                 userRepository.save(user);
-                //todo send sms
+
 
             }
         }
