@@ -1,5 +1,9 @@
 package tech.olatunbosun.wastemanagement.usermanagement.services;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -30,6 +34,7 @@ import tech.olatunbosun.wastemanagement.usermanagement.repository.TokenRepositor
 import tech.olatunbosun.wastemanagement.usermanagement.repository.UserRepository;
 import tech.olatunbosun.wastemanagement.usermanagement.request.ChangePasswordDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.request.CreateUserDTO;
+import tech.olatunbosun.wastemanagement.usermanagement.request.GoogleAuthRequest;
 import tech.olatunbosun.wastemanagement.usermanagement.request.LoginDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.response.GenericResponseDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.response.JwtTokenDTO;
@@ -39,8 +44,13 @@ import tech.olatunbosun.wastemanagement.usermanagement.utility.enums.TokenType;
 import tech.olatunbosun.wastemanagement.usermanagement.utility.enums.UserStatus;
 import tech.olatunbosun.wastemanagement.usermanagement.utility.enums.UserType;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.Principal;
+import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -68,6 +78,10 @@ public class UserServiceImpl implements UserService {
 
     @Value("${rabbitmq.binding.email.name}")
     private String emailRoutingKey;
+
+    //google secret key
+    @Value("${application.google.clientId}")
+    private String googleClientId;
 
 
     @Override
@@ -323,6 +337,75 @@ public class UserServiceImpl implements UserService {
         }
         return response;
     }
+
+    @Override
+    public GenericResponseDTO loginWithGoogle(GoogleAuthRequest googleAuthRequest) throws GeneralSecurityException, IOException {
+        GenericResponseDTO response = new GenericResponseDTO();
+        // Validate the ID token
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance())
+                .setAudience(Collections.singletonList(googleClientId))
+                .build();
+
+
+        GoogleIdToken idToken = verifier.verify(googleAuthRequest.getIdToken());
+
+        System.out.println("idToken  " + idToken);
+        if (idToken == null) {
+            response.setStatus("error");
+            response.setMessage("Invalid token");
+            response.setStatusCode(HttpStatus.BAD_REQUEST.value());
+            return response;
+        }
+
+        GoogleIdToken.Payload payload = idToken.getPayload();
+        System.out.println("payload  " + payload);
+
+        Optional<User> user = userRepository.findByEmail(googleAuthRequest.getEmail());
+        if (user.isEmpty()){
+            User newUser = new User();
+            newUser.setGoogleUser(true);
+            newUser.setFullName(googleAuthRequest.getFullName());
+            newUser.setEmail(googleAuthRequest.getEmail());
+            newUser.setPhoneNumber(googleAuthRequest.getPhoneNumber());
+            newUser.setStatus(UserStatus.ACTIVE);
+
+            userRepository.save(newUser);
+
+            revokeAllUserToken(newUser);
+
+
+            var jwt = jwtService.generateToken(newUser);
+            saveUserToken(newUser, jwt);
+            var refreshToken = jwtService.generateRefreshToken(newUser);
+            response.setData(UserResponseDTO.userResponseBuilder(newUser, null));
+            response.setMessage("Login successful");
+            response.setStatus("success");
+            response.setToken(JwtTokenDTO.data(jwt, TokenType.BEARER.name(), (int) jwtExpiration, refreshToken));
+            return response;
+        }
+
+        if (user.get().isGoogleUser()){
+            var jwt = jwtService.generateToken(user.get());
+            var refreshToken = jwtService.generateRefreshToken(user.get());
+
+            response.setData(UserResponseDTO.userResponseBuilder(user.get(), null));
+            response.setMessage("Login successful");
+            response.setStatus("success");
+            response.setToken(JwtTokenDTO.data(jwt, TokenType.BEARER.name(), (int) jwtExpiration, refreshToken));
+            return response;
+        }
+
+        return GenericResponseDTO.builder()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .status("error")
+                .message("You have not registered with google account")
+                .build();
+
+    }
+
+
+
+
 
     @Override
     public GenericResponseDTO changePassword(ChangePasswordDTO changePasswordDTO, Principal loggedInUser) {

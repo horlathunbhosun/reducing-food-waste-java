@@ -64,6 +64,9 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Token> tokens;
 
+    @Column(name = "is_google_user", nullable = false)
+    private boolean isGoogleUser = false;
+
 //    @OneToOne(mappedBy = "user")
 //    private Partner partner;
 

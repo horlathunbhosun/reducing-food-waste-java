@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tech.olatunbosun.wastemanagement.usermanagement.request.GoogleAuthRequest;
 import tech.olatunbosun.wastemanagement.usermanagement.request.LoginDTO;
 import tech.olatunbosun.wastemanagement.usermanagement.response.GenericResponseDTO;
 import tech.olatunbosun.wastemanagement.configs.JwtService;
@@ -24,6 +25,8 @@ import tech.olatunbosun.wastemanagement.usermanagement.services.UserService;
 import tech.olatunbosun.wastemanagement.usermanagement.services.UserServiceImpl;
 import tech.olatunbosun.wastemanagement.validation.ValidationErrorService;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +48,20 @@ public class UserLogin {
             return validate(bindingResult);
         }
         GenericResponseDTO genericResponseDTO = userService.login(loginDTO);
+        if(genericResponseDTO.getStatus().equals("error")){
+            return new ResponseEntity<>(genericResponseDTO, HttpStatusCode.valueOf(genericResponseDTO.getStatusCode()));
+        }
+        return ResponseEntity.ok().body(genericResponseDTO);
+
+    }
+
+    @PostMapping("/user/login/google")
+    public ResponseEntity<GenericResponseDTO> loginWithGoogle(@Valid @RequestBody GoogleAuthRequest googleAuthRequest, BindingResult bindingResult) throws GeneralSecurityException, IOException {
+
+        if (bindingResult.hasErrors()){
+            return validate(bindingResult);
+        }
+        GenericResponseDTO genericResponseDTO = userService.loginWithGoogle(googleAuthRequest);
         if(genericResponseDTO.getStatus().equals("error")){
             return new ResponseEntity<>(genericResponseDTO, HttpStatusCode.valueOf(genericResponseDTO.getStatusCode()));
         }

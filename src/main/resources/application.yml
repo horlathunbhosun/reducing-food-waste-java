@@ -54,6 +54,8 @@ application:
       expiration: 86400000
       refresh-token:
         expiration: 604800000
+  google:
+    clientId: 106570000000000000000
 
 rabbitmq:
   queue:
