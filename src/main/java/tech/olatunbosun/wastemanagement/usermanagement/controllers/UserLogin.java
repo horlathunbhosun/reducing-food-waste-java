@@ -57,7 +57,6 @@ public class UserLogin {
 
     @PostMapping("/user/login/google")
     public ResponseEntity<GenericResponseDTO> loginWithGoogle(@Valid @RequestBody GoogleAuthRequest googleAuthRequest, BindingResult bindingResult) throws GeneralSecurityException, IOException {
-
         if (bindingResult.hasErrors()){
             return validate(bindingResult);
         }
