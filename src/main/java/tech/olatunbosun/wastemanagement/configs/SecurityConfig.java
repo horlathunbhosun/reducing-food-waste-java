@@ -52,6 +52,8 @@ public class SecurityConfig  {
             "v1/products/**",
     };
 
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -78,6 +80,8 @@ public class SecurityConfig  {
 
 
     }
+
+
 
 
 }
