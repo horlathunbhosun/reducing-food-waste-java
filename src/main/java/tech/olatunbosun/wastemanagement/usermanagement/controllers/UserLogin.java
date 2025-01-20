@@ -72,6 +72,7 @@ public class UserLogin {
     public ResponseEntity<GenericResponseDTO> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         GenericResponseDTO genericResponseDTO = userService.refreshToken(request, response);
         if(genericResponseDTO.getStatus().equals("error")){
+            
             return new ResponseEntity<>(genericResponseDTO, HttpStatusCode.valueOf(genericResponseDTO.getStatusCode()));
         }
         return ResponseEntity.ok().body(genericResponseDTO);
